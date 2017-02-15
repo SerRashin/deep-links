@@ -1,0 +1,64 @@
+<html>
+
+<body>
+
+		
+test
+<div href="tg://resolve?domain=cbh7_bot&start=95ed66a042cf1b3f89ec909ed389b6f0-2230871">
+teleg
+</div>
+
+<a  id="check-tg" href="#" > CHECK TELEGRAM</a><br/><br/>
+<a  id="check-vb" href="#" > CHECK VIBER</a><br/><br/>
+
+
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="deeplink.js"></script>
+    
+    
+<script type="text/javascript">
+
+ $(function () {   
+    $('#check-tg').click(function() {
+        deeplink.setup({
+            iOS: {
+                appId:   "686449807",
+                appName: "telegram-messenger"
+            },
+            android: {
+                appId: "org.telegram.messenger"
+            },
+            windows: {
+                appId: '9wzdncrdzhs0',
+                appName: 'telegram-messenger'
+            },
+            desktop: {
+                appUrl:   "https://desktop.telegram.org/"
+            }
+        });
+    
+        deeplink.open('tg://resolve?domain=cbh7_bot');
+     });
+    
+     $('#check-vb').click(function() {
+        deeplink.open('viber://pa?chatURI=Callbackhunter', {
+            iOS: {
+                appId:   "382617920",
+                appName: "viber-besplatnye-zvonki-i"
+            },
+            android: {
+                appId: "com.viber.voip"
+            },
+            windows: {
+                appId: '9wzdncrfj46z',
+                appName: 'viber'
+            },
+            desktop: {
+                appUrl:   "https://www.viber.com/ru/"
+            }
+        });
+     });
+ });
+</script>
+</body>
+</html>

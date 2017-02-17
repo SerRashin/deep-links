@@ -165,6 +165,10 @@
         return getOSStoreAgent() === 'android';
     };
 
+    var isIOS = function () {
+        return getOSStoreAgent() === 'iOS';
+    };
+
     function _createHiddenIframe(target, uri) {
         var iframe = document.createElement('iframe');
         iframe.src = uri;
@@ -328,19 +332,21 @@
     }
 
     function openNewTab(url) {
-        var form = document.createElement("form");
+        if (url) {
+            var form = document.createElement("form");
 
-        form.id = 'open-tab-fake-form';
-        form.method = 'GET';
-        form.action = url;
-        form.target = '_blank';
-        document.body.appendChild(form);
-        form.submit();
+            form.id = 'open-tab-fake-form';
+            form.method = 'GET';
+            form.action = url;
+            form.target = '_blank';
+            document.body.appendChild(form);
+            form.submit();
 
-        if (typeof Element.prototype.remove === 'undefined') {
-            document.body.removeChild(form);
-        } else {
-            form.remove();
+            if (typeof Element.prototype.remove === 'undefined') {
+                document.body.removeChild(form);
+            } else {
+                form.remove();
+            }
         }
     }
 
@@ -348,6 +354,16 @@
         defaults = extend(defaults, options);
         setStoreLinks();
     };
+
+    var openFallback = function(ts) {
+        return function() {
+            var uri = links[getOSStoreAgent()].app;
+
+            if (typeof uri === "string" && (Date.now() - ts) < (defaults.delay + defaults.delta)) {
+                openURI(uri);
+            }
+        }
+    }
 
     /**
      * Open deep-links
@@ -368,9 +384,21 @@
                 uri += ';package=' + defaults.android.appId + ';end';
             }
 
-            if (!navigator.userAgent.match(/Chrome/)) {
+            if (navigator.userAgent.match(/Chrome/)) {
+                clearTimeout(timeout);
                 openURI(uri);
+            } else if (isIOS()) {
+                var time = (new Date()).getTime();
+                setTimeout(function(){
+                    if(confirm('Мы не смогли определить есть ли у вас приложение. Если у вас нет приложения нажмите "ОК", для начала установки.')){
+                        document.location = links.iOS.app;
+                    }
+                }, 2500);
+
+                document.location=uri;
             } else {
+                timeout = setTimeout(openFallback(Date.now()), defaults.delay);
+
                 var iframe = document.createElement('iframe');
                 iframe.onload = function() {
                     clearTimeout(timeout);
